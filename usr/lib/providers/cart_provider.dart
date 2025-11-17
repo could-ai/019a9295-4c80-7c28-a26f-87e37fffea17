@@ -21,14 +21,17 @@ class CartProvider with ChangeNotifier {
     return total;
   }
 
-  void addItem(Book book) {
+  void addItem(Book book, {int quantity = 1}) {
+    if (!book.isAvailable || quantity <= 0) {
+      return; // Prevent adding unavailable or invalid books
+    }
     if (_items.containsKey(book.id)) {
       _items.update(
         book.id,
         (existingCartItem) => CartItem(
           id: existingCartItem.id,
           book: existingCartItem.book,
-          quantity: existingCartItem.quantity + 1,
+          quantity: existingCartItem.quantity + quantity,
         ),
       );
     } else {
@@ -37,7 +40,7 @@ class CartProvider with ChangeNotifier {
         () => CartItem(
           id: DateTime.now().toString(),
           book: book,
-          quantity: 1,
+          quantity: quantity,
         ),
       );
     }
@@ -45,21 +48,21 @@ class CartProvider with ChangeNotifier {
   }
 
   void updateQuantity(String bookId, int quantity) {
-    if (!_items.containsKey(bookId)) {
+    if (quantity <= 0 || !_items.containsKey(bookId)) {
+      if (_items.containsKey(bookId) && quantity <= 0) {
+        _items.remove(bookId);
+      }
+      notifyListeners();
       return;
     }
-    if (quantity > 0) {
-      _items.update(
-        bookId,
-        (existingCartItem) => CartItem(
-          id: existingCartItem.id,
-          book: existingCartItem.book,
-          quantity: quantity,
-        ),
-      );
-    } else {
-      _items.remove(bookId);
-    }
+    _items.update(
+      bookId,
+      (existingCartItem) => CartItem(
+        id: existingCartItem.id,
+        book: existingCartItem.book,
+        quantity: quantity,
+      ),
+    );
     notifyListeners();
   }
 

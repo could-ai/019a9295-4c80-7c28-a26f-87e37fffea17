@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/book.dart';
-import '../models/cart.dart';
+import '../providers/cart_provider.dart';
 
 class BookItem extends StatelessWidget {
   final Book book;
@@ -10,9 +10,9 @@ class BookItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<Cart>(context);
-    final isInCart = cart.isInCart(book.id);
-    final quantity = cart.getQuantity(book.id);
+    final cart = Provider.of<CartProvider>(context);
+    final isInCart = cart.items.containsKey(book.id);
+    final quantity = isInCart ? cart.items[book.id]!.quantity : 0;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -33,7 +33,7 @@ class BookItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '$${book.price.toStringAsFixed(2)}',
+                    '\$${book.price.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -62,7 +62,7 @@ class BookItem extends StatelessWidget {
                   Text('$quantity'),
                   IconButton(
                     icon: const Icon(Icons.add),
-                    onPressed: () => cart.addItem(book, quantity: 1),
+                    onPressed: () => cart.addItem(book),
                   ),
                 ],
               )

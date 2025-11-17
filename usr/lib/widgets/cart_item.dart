@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/cart.dart';
+import '../providers/cart_provider.dart';
+import '../models/cart_item.dart';
 
 class CartItemWidget extends StatelessWidget {
+  final String cartItemId;
   final CartItem cartItem;
 
-  const CartItemWidget({super.key, required this.cartItem});
+  const CartItemWidget({super.key, required this.cartItemId, required this.cartItem});
 
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<Cart>(context);
+    final cart = Provider.of<CartProvider>(context);
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -30,14 +32,14 @@ class CartItemWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '$${cartItem.book.price.toStringAsFixed(2)} each',
+                    '\$${cartItem.book.price.toStringAsFixed(2)} each',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
                     ),
                   ),
                   Text(
-                    'Total: $${cartItem.totalPrice.toStringAsFixed(2)}',
+                    'Total: \$${cartItem.totalPrice.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -51,8 +53,8 @@ class CartItemWidget extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.remove),
                   onPressed: cartItem.quantity > 1
-                      ? () => cart.updateQuantity(cartItem.book.id, cartItem.quantity - 1)
-                      : () => cart.removeItem(cartItem.book.id),
+                      ? () => cart.updateQuantity(cartItemId, cartItem.quantity - 1)
+                      : () => cart.removeItem(cartItemId),
                 ),
                 SizedBox(
                   width: 40,
@@ -63,10 +65,7 @@ class CartItemWidget extends StatelessWidget {
                     onFieldSubmitted: (value) {
                       final newQuantity = int.tryParse(value);
                       if (newQuantity != null && newQuantity > 0) {
-                        cart.updateQuantity(cartItem.book.id, newQuantity);
-                      } else {
-                        // Reset to previous value if invalid
-                        // The field will keep the invalid value until corrected
+                        cart.updateQuantity(cartItemId, newQuantity);
                       }
                     },
                     decoration: const InputDecoration(
@@ -77,11 +76,11 @@ class CartItemWidget extends StatelessWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.add),
-                  onPressed: () => cart.addItem(cartItem.book, quantity: 1),
+                  onPressed: () => cart.addItem(cartItem.book),
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete),
-                  onPressed: () => cart.removeItem(cartItem.book.id),
+                  onPressed: () => cart.removeItem(cartItemId),
                 ),
               ],
             ),

@@ -8,7 +8,7 @@ class BookListScreen extends StatelessWidget {
   final List<Book> _books = [
     Book(id: 'b1', title: 'The Lord of the Rings', author: 'J.R.R. Tolkien', price: 25.99),
     Book(id: 'b2', title: 'The Hobbit', author: 'J.R.R. Tolkien', price: 15.99),
-    Book(id: 'b3', title: 'Pride and Prejudice', author: 'Jane Austen', price: 12.99),
+    Book(id: 'b3', title: 'Pride and Prejudice', author: 'Jane Austen', price: 12.99, isAvailable: false),
     Book(id: 'b4', title: 'To Kill a Mockingbird', author: 'Harper Lee', price: 14.99),
   ];
 
@@ -42,7 +42,7 @@ class BookListScreen extends StatelessWidget {
           subtitle: Text('${_books[i].author} - \$${_books[i].price.toStringAsFixed(2)}'),
           trailing: IconButton(
             icon: const Icon(Icons.add_shopping_cart),
-            onPressed: () {
+            onPressed: _books[i].isAvailable ? () {
               Provider.of<CartProvider>(context, listen: false).addItem(_books[i]);
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -57,7 +57,7 @@ class BookListScreen extends StatelessWidget {
                   ),
                 ),
               );
-            },
+            } : null,
           ),
         ),
       ),

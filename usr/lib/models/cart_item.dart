@@ -10,4 +10,6 @@ class CartItem {
     required this.book,
     this.quantity = 1,
   });
+
+  double get totalPrice => book.price * quantity;
 }
