@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'screens/book_list_screen.dart';
-import 'screens/cart_screen.dart';
-import 'models/cart.dart';
+import 'package:couldai_user_app/providers/cart_provider.dart';
+import 'package:couldai_user_app/screens/book_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,21 +12,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => Cart()),
-      ],
+    return ChangeNotifierProvider(
+      create: (ctx) => CartProvider(),
       child: MaterialApp(
-        title: 'Book Shopping Cart',
+        title: 'Bookstore',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
         ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const BookListScreen(),
-          '/cart': (context) => const CartScreen(),
-        },
+        home: BookListScreen(),
       ),
     );
   }
